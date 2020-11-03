@@ -13,6 +13,12 @@ import {
   GET_REPOS,
 } from '../types.js';
 
+const github = axios.create({
+  baseURL: 'https://api.github.com',
+  timeout: 1000,
+  headers: { Authorization: process.env.REACT_APP_GITHUB_TOKEN },
+});
+
 // this is global states anything todo with github
 // githubState will include all of actions
 const GithubState = (props) => {
@@ -29,7 +35,7 @@ const GithubState = (props) => {
   const searchUsers = async (text) => {
     console.log(text);
     setLoading();
-    const res = await axios.get(
+    const res = await github.get(
       `https://api.github.com/search/users?q=${text}`
     );
     dispatch({
@@ -37,11 +43,12 @@ const GithubState = (props) => {
       payload: res.data.items,
     });
   };
+
   // Get User
   const getUser = async (username) => {
     setLoading();
 
-    const res = await axios.get(`https://api.github.com/users/${username}`);
+    const res = await github.get(`https://api.github.com/users/${username}`);
     // console.log('is user info responding? ',res.data)
 
     dispatch({
@@ -53,7 +60,7 @@ const GithubState = (props) => {
   // Get Repos
   const getUserRepos = async (username) => {
     setLoading();
-    const res = await axios.get(
+    const res = await github.get(
       `https://api.github.com/users/${username}/repos?per_page=5&sort=created:asc&`
     );
     console.log('is user info responding? ', res.data);
